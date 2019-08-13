@@ -2,20 +2,18 @@ const mongoose = require('mongoose');
 
 const bcrypt = require('bcrypt');
 
-
-
 // UNIQUE PROPERTY VALIDATOR
 const mongooseUniqueValidator = require('mongoose-unique-validator');
 
 // SUPER ADMIN SCHEMA
 const UserSchema = new mongoose.Schema({
-  username: String,
-  password: String
+  email: String,
+  password: String,
 });
 
 // pre save functiion
-UserSchema.pre("save", function (next) {
-  if (!this.isModified("password")) {
+UserSchema.pre('save', function(next) {
+  if (!this.isModified('password')) {
     return next();
   }
   this.password = bcrypt.hashSync(this.password, 10);
@@ -23,162 +21,228 @@ UserSchema.pre("save", function (next) {
 });
 
 // compare passwords
-UserSchema.methods.comparePassword = function (plaintext, callback) {
+UserSchema.methods.comparePassword = function(plaintext, callback) {
   return callback(null, bcrypt.compareSync(plaintext, this.password));
 };
 
-
-
-
-
 // SCHEMA BLUEPRINTS
-const saccoSchema = new mongoose.Schema({
+const saccoSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    uniqueSaccoCode: {
+      type: String,
+      required: true,
+    },
+    address: {
+      type: String,
+      // required: false
+    },
+    postal_code: {
+      type: Number,
+    },
+    registration_number: {
+      type: String,
+      required: true,
+      unique: true,
+    },
 
-  name: {
-    type: String,
-    required: true,
-  },
-  address: {
-    type: String,
-    // required: false
-  },
-  postal_code: {
-    type: Number
-  },
-  registration_number: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    index: { unique: true }
-  },
+    telephone_number: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    membership: Number,
+    date_founded: {
+      type: Date,
+      required: true,
+    },
 
-  telephone_number: {
-    type: String,
-    required: true,
-    unique: true,
+    description: String,
+    website: {
+      type: String,
+    },
+    created: {
+      type: Date,
+      default: new Date(),
+    },
+    saccoLeaderFname: {
+      type: String,
+      requred: true,
+    },
+    saccoLeaderLname: {
+      type: String,
+      requred: true,
+    },
+    saccoLeaderPhoneNumber: {
+      type: String,
+      requred: true,
+    },
+    status: {
+      type: String,
+      default: 'Active',
+    },
+    email: {
+      type: String,
+      required: true,
+      index: { unique: true },
+    },
+    // username: { type: String, required: true, index: { unique: true } },
+    password: { type: String, required: true },
+    // ....
   },
-  membership: Number,
-  date_founded: {
-    type: Date,
-    required: true
-  },
+  { strict: false }
+);
 
-  description: String,
-  website: {
-    type: String,
-    validate: {
-      validator: link => link.indexOf('www') === 0,
-      message: 'Webpage URL must start with https://',
-    }
-  },
-  created: {
-    type: Date,
-    default: new Date(),
-  },
-  status: {
-    type: String,
-    default: 'Active'
-  },
-  // username: { type: String, required: true, index: { unique: true } },
-  password: { type: String, required: true }
-  // ....
+saccoSchema .pre('save', function(next) {
+  if (!this.isModified('password')) {
+    return next();
+  }
+  this.password = bcrypt.hashSync(this.password, 10);
+  next();
+});
 
-}, { strict: false });
+// compare passwords
+saccoSchema .methods.comparePassword = function(plaintext, callback) {
+  return callback(null, bcrypt.compareSync(plaintext, this.password));
+};
 
 // RIDER SCHEMA
-const riderSchema = new mongoose.Schema({
-
-  first_name: {
-    type: String,
-    required: true,
-  },
-  sur_name: {
-    type: String,
-    required: true,
-  },
-  last_name: {
-    type: String,
-    required: true,
-  },
-  telephone_number: {
-    type: Number,
-    required: true,
-  },
-  address: {
-    type: String,
-    required: true,
-  },
-  passport_photo: {
-    type: Buffer,
-    required: false,
-  },
-  license_number: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  insurance: {
-    number: {
+const riderSchema = new mongoose.Schema(
+  {
+    riderFname: {
+      type: String,
+      required: true,
+    },
+    riderSurName: {
+      type: String,
+      required: true,
+    },
+    riderLname: {
+      type: String,
+      required: true,
+    },
+    riderTelNumber: {
+      type: String,
+      required: true,
+      unique: true
+    },
+    drivingLicense:{
+      type: String,
+      required: true,
+      unique:true
+    },
+   
+    DLIssueDate:{
+      type: Date,
+      required: true
+    },
+    DLExpDate:{
+      type:Date,
+      required: true
+    },
+    riderPassportPhoto: {
+      type: String,
+      required: false,
+    },
+    riderID: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    riderBase:{
+      type: String,
+      required: true
+    },
+    riderResidence:{
+      type: String,
+      required: true
+    },
+    bikeOwnerFname: {
+      type: String,
+      required: true,
+    },
+    bikeOwnerLname: {
+      type: String,
+      required: true,
+    },
+    bikeOwnerResidence:{
+      type: String,
+      reqiured: true
+    },
+     bikeOwnerID: {
+      type: Number,
+      required: true,
+    },
+    bikeOwnerTelNumber: {
+      type: String,
+      required: true,
+    },
+    motorBikeMake: {
+      type: String,
+      required: true,
+    },
+    motorBikeBrand: {
+      type: String,
+      required: true,
+    },
+ 
+    insuranceNumber: {
       type: String,
       // required: true,
       unique: true,
     },
-    issue_date: {
+    insuranceIssueDate: {
       type: Date,
       required: true,
       // default: new Date(),
     },
-    exp_date: {
+    insuranceExpDate: {
       type: Date,
       required: true,
       // default: new Date(),
     },
-  },
-  // revisit
-  passport_ID: {
-    type: String,
-    required: true,
-    unique: true,
-
-  },
-  number_plate: {
-    type: String,
-    required: true,
-    unique: true,
-    validate: {
-      validator: text => text.indexOf('K') === 0,
-      message: 'Invalid number plate',
+    numberPlate: {
+      type: String,
+      required: true,
+      unique: true,
+      validate: {
+        validator: text => text.indexOf('K') === 0,
+        message: 'Invalid number plate',
+      },
+    },
+    // revisit
+   
+   
+    created: {
+      type: Date,
+      default: new Date(),
+    },
+    // react states
+    status: {
+      type: String,
+      default: 'Active',
+    },
+    // TODO challenge on how to implement ratings on the riders
+    ratings: {
+      type: Number,
+      min: 0,
+      max: [5, 'Number of stars cannot exceed 5'],
     },
 
+    // THIS IS WHERE WE REFERENCE THE RIDER TO THEIR RESPECTIVE SACCOS
+    sacco: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Sacco',
+    },
   },
-  created: {
-    type: Date,
-    default: new Date(),
-  },
-  // react states
-  status: {
-    type: String,
-    default: "Active",
-  },
-  // TODO challenge on how to implement ratings on the riders
-  ratings:
-  {
-    type: Number,
-    min: 0,
-    max: [5, 'Number of stars cannot exceed 5']
-  },
+  { strict: false }
+);
 
-  // THIS IS WHERE WE REFERENCE THE RIDER TO THEIR RESPECTIVE SACCOS
-  sacco: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Sacco',
-  },
 
-}, { strict: false });
+
 // USING PLUGINS T
 saccoSchema.plugin(mongooseUniqueValidator);
 riderSchema.plugin(mongooseUniqueValidator);
@@ -187,13 +251,12 @@ riderSchema.plugin(mongooseUniqueValidator);
 // THIS CAN ALSO BE EXPORTED TO ANOTHER MODULARISED FILE
 const Sacco = mongoose.model('Sacco', saccoSchema);
 const Rider = mongoose.model('Rider', riderSchema);
-const UserModel = mongoose.model("user", UserSchema);
+const UserModel = mongoose.model('user', UserSchema);
 
 // ++INSERTING SOME DATA INTO THE DATABASE++
-
 
 module.exports = {
   Sacco,
   Rider,
-  UserModel
+  UserModel,
 };

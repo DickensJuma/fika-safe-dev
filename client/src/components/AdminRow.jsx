@@ -1,27 +1,39 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
 import {
   Badge,
   DropdownMenu,
   DropdownItem,
   UncontrolledDropdown,
   DropdownToggle,
-  Media,
-} from 'reactstrap';
+  Media
+} from "reactstrap";
+import { Redirect, Link } from "react-router-dom";
 
 export default class AdminRow extends Component {
   constructor(props) {
     super(props);
-    const { sacco } = props;
-    console.log(sacco.status);
+    const { data } = props;
+    const sacco = data;
+    // console.log(sacco.status);
     this.state = {
-      status: sacco.status,
+      status: sacco.status
     };
   }
+  
+  // onclik handler functions
+  onEditSacco = ({
+    event: {
+      target: { name, value }
+    }
+  }) => {
+    Redirect(`admin/sacco-profile/`);
+  };
 
   render() {
     const { status } = this.state;
-    const { sacco } = this.props;
+    const { data } = this.props;
+    const sacco = data;
     console.log(sacco);
     return (
       <>
@@ -37,7 +49,7 @@ export default class AdminRow extends Component {
           </th>
           <td>{sacco.created.substr(0, 10)}</td>
           <td>
-            {status === 'Active' ? (
+            {status === "Active" ? (
               <Badge color="" className="badge-dot mr-4">
                 <i className="bg-success" />
                 Active
@@ -70,8 +82,10 @@ export default class AdminRow extends Component {
                 <i className="fas fa-ellipsis-v" />
               </DropdownToggle>
               <DropdownMenu className="dropdown-menu-arrow" right>
-                <DropdownItem href="#pablo" onClick={e => e.preventDefault()}>
-                  Edit
+                <DropdownItem onClick={e => e.preventDefault()}>
+                  <Link to={{ pathname: `sacco/profile/${sacco._id}` }}>
+                    Edit
+                  </Link>
                 </DropdownItem>
                 <DropdownItem href="#pablo" onClick={e => e.preventDefault()}>
                   Deactivate
@@ -84,7 +98,6 @@ export default class AdminRow extends Component {
     );
   }
 }
-
 AdminRow.propTypes = {
-  sacco: PropTypes.object,
+  sacco: PropTypes.object
 };
